@@ -1,0 +1,173 @@
+/* ===== 自定义动画与特效（Tailwind CDN 不含这些类） ===== */
+
+/* 选中棋子的旋转虚线圈 */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 6s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* 弹窗弹入 */
+@keyframes pop-in {
+  0% { transform: scale(0.7) translateY(10px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+.animate-pop-in {
+  animation: pop-in 0.35s cubic-bezier(0.2, 1.2, 0.3, 1) both;
+}
+
+/* 规则面板滑入 */
+@keyframes slide-down {
+  from { transform: translateY(-8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.animate-slide-down {
+  animation: slide-down 0.25s ease-out both;
+}
+
+/* 无效操作时棋盘抖动 */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+}
+.animate-shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+/* 可落点呼吸提示 */
+@keyframes move-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.5); opacity: 0.35; }
+}
+.move-pulse {
+  animation: move-pulse 1.3s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* 可落点：悬停时外圈展开 */
+.move-target circle {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.move-target .move-hover-ring {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.18s ease-out;
+}
+.move-target:hover .move-hover-ring {
+  opacity: 1;
+  transform: scale(1);
+}
+.move-target:hover .move-dot {
+  transform: scale(1.35);
+}
+
+/* ===== 爆炸特效 ===== */
+@keyframes boom-flash {
+  0% { transform: scale(0.3); opacity: 1; }
+  70% { opacity: 0.9; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.boom-flash {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 58px;
+  height: 58px;
+  margin: -29px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fff8d0 0%, #fbbf24 35%, #f97316 62%, transparent 72%);
+  animation: boom-flash 0.45s ease-out both;
+}
+
+@keyframes boom-ring {
+  0% { transform: scale(0.2); opacity: 1; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+.boom-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 58px;
+  height: 58px;
+  margin: -29px;
+  border-radius: 9999px;
+  border: 3px solid #fde68a;
+  animation: boom-ring 0.55s ease-out both;
+}
+
+@keyframes boom-particle {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.25); opacity: 0; }
+}
+.boom-particle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin: -4px;
+  border-radius: 9999px;
+  animation: boom-particle 0.62s cubic-bezier(0.1, 0.8, 0.4, 1) both;
+}
+
+@keyframes boom-smoke {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0.5; }
+  100% { transform: translate(-50%, -90%) scale(1.6); opacity: 0; }
+}
+.boom-smoke {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(120, 113, 108, 0.55), transparent 70%);
+  animation: boom-smoke 0.8s ease-out both;
+}
+
+/* ===== 胜利彩带 ===== */
+@keyframes confetti-fall {
+  0% { transform: translateY(-30px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(560px) rotate(740deg); opacity: 0; }
+}
+.confetti {
+  position: absolute;
+  top: -16px;
+  width: 9px;
+  height: 15px;
+  border-radius: 2px;
+  animation: confetti-fall linear both infinite;
+}
+
+/* 胜利文字光晕 */
+@keyframes trophy-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-trophy {
+  animation: trophy-bounce 1.4s ease-in-out infinite;
+}
+
+/* 回合切换提示弹跳 */
+@keyframes turn-pop {
+  0% { transform: scale(0.85); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.animate-turn-pop {
+  animation: turn-pop 0.3s ease-out both;
+}
+
+/* ===== 滚动条 ===== */
+.log-scroll::-webkit-scrollbar { width: 5px; }
+.log-scroll::-webkit-scrollbar-track { background: transparent; }
+.log-scroll::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 3px; }
+.log-scroll::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
