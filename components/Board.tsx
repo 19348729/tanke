@@ -93,13 +93,18 @@ export const Board: React.FC<BoardProps> = ({
 
     return (
       <>
+        {/* 刻线效果：先画一层错位的浅色高光，再画深色线条 */}
+        <g transform="translate(0.8 1)" opacity="0.55">
+          <path d={dPaths} stroke="#fff6e0" strokeWidth="1.5" strokeLinecap="square" />
+          <path d={mainPaths} stroke="#fff6e0" strokeWidth="2.5" strokeLinecap="square" />
+        </g>
         {/* 斜线 */}
-        <path d={dPaths} stroke="#bb9866" strokeWidth="1.5" strokeLinecap="square" />
+        <path d={dPaths} stroke="#a9834f" strokeWidth="1.5" strokeLinecap="square" />
         {/* 主网格 */}
-        <path d={mainPaths} stroke="#6b4f2a" strokeWidth="2.5" strokeLinecap="square" />
-        {/* 外边框（双线，更像传统棋盘） */}
-        <rect x={padding} y={padding} width={boardSizePx} height={boardSizePx} fill="none" stroke="#5b4226" strokeWidth="4" />
-        <rect x={padding - 7} y={padding - 7} width={boardSizePx + 14} height={boardSizePx + 14} fill="none" stroke="#5b4226" strokeWidth="1.5" opacity="0.6" />
+        <path d={mainPaths} stroke="#5e4322" strokeWidth="2.5" strokeLinecap="square" />
+        {/* 外边框（粗细双线，更像传统棋盘） */}
+        <rect x={padding} y={padding} width={boardSizePx} height={boardSizePx} fill="none" stroke="#4a3219" strokeWidth="4" />
+        <rect x={padding - 14} y={padding - 14} width={boardSizePx + 28} height={boardSizePx + 28} fill="none" stroke="#4a3219" strokeWidth="1.5" opacity="0.75" />
       </>
     );
   };
@@ -116,7 +121,7 @@ export const Board: React.FC<BoardProps> = ({
           x1={from.x} y1={from.y} x2={to.x} y2={to.y}
           stroke="#d97706" strokeWidth="2" strokeDasharray="4,6" opacity="0.35"
         />
-        <circle cx={to.x} cy={to.y} r={27} fill="rgba(217, 119, 6, 0.12)" stroke="#d97706" strokeWidth="2" opacity="0.8" />
+        <circle cx={to.x} cy={to.y} r={31} fill="rgba(217, 119, 6, 0.14)" stroke="#d97706" strokeWidth="2" opacity="0.85" />
       </g>
     );
   };
@@ -169,8 +174,8 @@ export const Board: React.FC<BoardProps> = ({
               <circle
                 cx={x}
                 cy={y}
-                r={isMainIntersection ? 4 : 3}
-                fill={isMainIntersection ? '#8a6a3f' : '#c4a878'}
+                r={isMainIntersection ? 4 : 2.5}
+                fill={isMainIntersection ? '#5e4322' : '#a9834f'}
               />
             )}
 
@@ -180,10 +185,11 @@ export const Board: React.FC<BoardProps> = ({
                 <circle
                   cx={x}
                   cy={y}
-                  r={16}
-                  fill="none"
+                  r={24}
+                  fill="rgba(34, 197, 94, 0.08)"
                   stroke="#16a34a"
-                  strokeWidth="2.5"
+                  strokeWidth="2"
+                  strokeDasharray="5,4"
                   className="move-hover-ring pointer-events-none"
                 />
                 <circle
@@ -212,61 +218,79 @@ export const Board: React.FC<BoardProps> = ({
 
   return (
     <div
-      className={`relative select-none rounded-xl overflow-hidden border-[10px] border-[#8a5f33] ${shaking ? 'animate-shake' : ''}`}
-      style={{ boxShadow: '0 25px 50px -12px rgba(67, 40, 14, 0.5), inset 0 0 40px rgba(91, 66, 38, 0.15)' }}
+      className={`board-frame relative select-none rounded-xl ${shaking ? 'animate-shake' : ''}`}
+      style={{ padding: BORDER_PX }}
     >
-      <svg width={totalSize} height={totalSize} className="block">
-        <defs>
-          {/* 木纹底色 */}
-          <linearGradient id="wood-bg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#f3dcae" />
-            <stop offset="45%" stopColor="#ecca90" />
-            <stop offset="100%" stopColor="#dfb273" />
-          </linearGradient>
-          {/* 木纹噪点 */}
-          <filter id="wood-grain" x="0" y="0" width="100%" height="100%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.012 0.18" numOctaves="3" seed="7" />
-            <feColorMatrix
-              type="matrix"
-              values="0 0 0 0 0.42  0 0 0 0 0.30  0 0 0 0 0.16  0 0 0 0.09 0"
+      <div className="relative rounded-[4px] overflow-hidden board-inset">
+        <svg width={totalSize} height={totalSize} className="block">
+          <defs>
+            {/* 木纹底色 */}
+            <linearGradient id="wood-bg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#f4ddb0" />
+              <stop offset="45%" stopColor="#ebc88d" />
+              <stop offset="100%" stopColor="#dcac6b" />
+            </linearGradient>
+            {/* 木纹：横向拉长的湍流噪声模拟年轮纹理 */}
+            <filter id="wood-grain" x="0" y="0" width="100%" height="100%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.006 0.09" numOctaves="4" seed="11" />
+              <feColorMatrix
+                type="matrix"
+                values="0 0 0 0 0.45  0 0 0 0 0.29  0 0 0 0 0.12  0 0 0 0.22 -0.02"
+              />
+            </filter>
+            {/* 细密木纤维 */}
+            <filter id="wood-fiber" x="0" y="0" width="100%" height="100%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.9 0.02" numOctaves="2" seed="3" />
+              <feColorMatrix
+                type="matrix"
+                values="0 0 0 0 0.40  0 0 0 0 0.26  0 0 0 0 0.12  0 0 0 0.08 0"
+              />
+            </filter>
+            {/* 边缘暗角 */}
+            <radialGradient id="wood-vignette" cx="0.5" cy="0.5" r="0.72">
+              <stop offset="60%" stopColor="#5b3a17" stopOpacity="0" />
+              <stop offset="100%" stopColor="#5b3a17" stopOpacity="0.22" />
+            </radialGradient>
+          </defs>
+
+          {/* 棋盘背景 */}
+          <rect width="100%" height="100%" fill="url(#wood-bg)" />
+          <rect width="100%" height="100%" filter="url(#wood-grain)" />
+          <rect width="100%" height="100%" filter="url(#wood-fiber)" />
+          <rect width="100%" height="100%" fill="url(#wood-vignette)" />
+
+          {/* Grid Layer */}
+          {renderGrid()}
+
+          {/* 上一步标记（位于棋子下方） */}
+          {renderLastMove()}
+
+          {/* Interaction Layer (Nodes) */}
+          {renderIntersections()}
+        </svg>
+
+        {/* Pieces Layer */}
+        <div className="absolute inset-0 pointer-events-none">
+          {gameState.pieces.map(piece => !piece.isDead && (
+            <Piece
+              key={piece.id}
+              piece={piece}
+              padding={padding}
+              stepSize={stepSize}
+              isSelected={gameState.selectedPieceId === piece.id}
+              isActiveSide={piece.player === gameState.currentPlayer && !gameState.winner}
+              onSelect={() => onPieceSelect(piece.id)}
             />
-          </filter>
-        </defs>
+          ))}
+        </div>
 
-        {/* 棋盘背景 */}
-        <rect width="100%" height="100%" fill="url(#wood-bg)" />
-        <rect width="100%" height="100%" filter="url(#wood-grain)" />
-
-        {/* Grid Layer */}
-        {renderGrid()}
-
-        {/* 上一步标记（位于棋子下方） */}
-        {renderLastMove()}
-
-        {/* Interaction Layer (Nodes) */}
-        {renderIntersections()}
-      </svg>
-
-      {/* Pieces Layer */}
-      <div className="absolute inset-0 pointer-events-none">
-        {gameState.pieces.map(piece => !piece.isDead && (
-          <Piece
-            key={piece.id}
-            piece={piece}
-            padding={padding}
-            stepSize={stepSize}
-            isSelected={gameState.selectedPieceId === piece.id}
-            onSelect={() => onPieceSelect(piece.id)}
-          />
-        ))}
-      </div>
-
-      {/* 爆炸特效层 */}
-      <div className="absolute inset-0 pointer-events-none">
-        {explosions.map(exp => {
-          const { x, y } = toPx(exp.position);
-          return <Explosion key={exp.key} x={x} y={y} />;
-        })}
+        {/* 爆炸特效层 */}
+        <div className="absolute inset-0 pointer-events-none">
+          {explosions.map(exp => {
+            const { x, y } = toPx(exp.position);
+            return <Explosion key={exp.key} x={x} y={y} />;
+          })}
+        </div>
       </div>
     </div>
   );
