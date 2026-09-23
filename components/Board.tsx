@@ -48,13 +48,18 @@ const Explosion: React.FC<{ x: number; y: number }> = ({ x, y }) => {
   );
 };
 
+const stepSize = 60;
+const padding = 60;
+const boardSizePx = stepSize * (BOARD_SIZE - 1);
+const totalSize = boardSizePx + padding * 2;
+const BORDER_PX = 10;
+
+// 棋盘外框总尺寸（含边框），供外层按屏幕宽度等比缩放
+export const BOARD_OUTER_PX = totalSize + BORDER_PX * 2;
+
 export const Board: React.FC<BoardProps> = ({
   gameState, explosions, shaking, onPieceSelect, onMove, onInvalidClick, isValidMove,
 }) => {
-  const stepSize = 60;
-  const padding = 60;
-  const boardSizePx = stepSize * (BOARD_SIZE - 1);
-  const totalSize = boardSizePx + padding * 2;
 
   const toPx = (pos: Position) => ({
     x: padding + pos.col * stepSize,

@@ -1,4 +1,8 @@
-/* ===== 自定义动画与特效（Tailwind CDN 不含这些类） ===== */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== 自定义动画与特效（Tailwind 默认不含这些类） ===== */
 
 /* 选中棋子的旋转虚线圈 */
 @keyframes spin-slow {
