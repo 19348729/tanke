@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Board, ExplosionEffect } from './components/Board';
+import { Board, ExplosionEffect, BOARD_OUTER_PX } from './components/Board';
 import { GameState, Player, Piece, Position, BOARD_SIZE } from './types';
 import { RotateCcw, Info, Trophy, Undo2, Volume2, VolumeX } from 'lucide-react';
 import { setMuted, playSelect, playMove, playCapture, playInvalid, playUndo, playWin } from './utils/sounds';
@@ -39,6 +39,13 @@ const createInitialState = (): GameState => {
   };
 };
 
+// 页面左右留白（p-4 ×2）
+const PAGE_GUTTER_PX = 32;
+
+// 按视口宽度计算棋盘缩放比例，小屏等比缩小，大屏保持原尺寸
+const calcBoardScale = () =>
+  Math.min(1, (window.innerWidth - PAGE_GUTTER_PX) / BOARD_OUTER_PX);
+
 const CONFETTI_COLORS = ['#ef4444', '#f97316', '#fbbf24', '#22c55e', '#3b82f6', '#a855f7', '#ec4899'];
 
 export default function App() {
@@ -49,6 +56,13 @@ export default function App() {
   const [explosions, setExplosions] = useState<ExplosionEffect[]>([]);
   const [shaking, setShaking] = useState(false);
   const shakeTimer = useRef<number | null>(null);
+  const [boardScale, setBoardScale] = useState(calcBoardScale);
+
+  useEffect(() => {
+    const onResize = () => setBoardScale(calcBoardScale());
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   // Check for win condition
   useEffect(() => {
@@ -332,62 +346,74 @@ export default function App() {
       <div className="w-full max-w-[1200px] flex flex-col lg:flex-row gap-8 items-center lg:items-start justify-center">
 
         {/* Game Board Section */}
-        <div className="flex flex-col items-center gap-6 flex-shrink-0">
-          <div className="relative">
-            {/* Header Info */}
-            <div className="absolute -top-14 left-0 w-full flex justify-between items-center z-10">
-              <PlayerBadge player="black" />
-              <PlayerBadge player="red" />
-            </div>
+        <div className="flex flex-col items-center gap-4 flex-shrink-0">
+          {/* Header Info */}
+          <div className="flex justify-between items-center" style={{ width: BOARD_OUTER_PX * boardScale }}>
+            <PlayerBadge player="black" />
+            <PlayerBadge player="red" />
+          </div>
 
-            <Board
-              gameState={gameState}
-              explosions={explosions}
-              shaking={shaking}
-              onPieceSelect={handlePieceSelect}
-              onMove={handleMove}
-              onInvalidClick={triggerShake}
-              isValidMove={isValidMove}
-            />
+          {/* 占位容器按缩放后的尺寸排版，内层保持原始像素坐标整体缩放 */}
+          <div style={{ width: BOARD_OUTER_PX * boardScale, height: BOARD_OUTER_PX * boardScale }}>
+            <div
+              className="relative"
+              style={{
+                width: BOARD_OUTER_PX,
+                height: BOARD_OUTER_PX,
+                transform: `scale(${boardScale})`,
+                transformOrigin: 'top left',
+              }}
+            >
 
-            {/* Winner Overlay */}
-            {gameState.winner && (
-              <div className="absolute inset-0 bg-black/30 backdrop-blur-[3px] flex items-center justify-center rounded-lg z-50 overflow-hidden">
-                {/* 彩带 */}
-                {Array.from({ length: 28 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="confetti"
-                    style={{
-                      left: `${(i * 37) % 100}%`,
-                      background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-                      animationDuration: `${2.2 + (i % 5) * 0.45}s`,
-                      animationDelay: `${(i % 7) * 0.25}s`,
-                    }}
-                  />
-                ))}
-                <div className="bg-white/95 p-8 rounded-2xl shadow-2xl flex flex-col items-center animate-pop-in">
-                  <Trophy className={`w-14 h-14 mb-4 animate-trophy ${gameState.winner === 'red' ? 'text-red-500' : 'text-stone-800'}`} />
-                  <h2 className={`text-3xl font-serif font-bold mb-1 tracking-widest ${gameState.winner === 'red' ? 'text-red-600' : 'text-stone-900'}`}>
-                    {gameState.winner === 'red' ? '红方' : '黑方'} 胜利!
-                  </h2>
-                  <p className="text-sm text-stone-400 mb-4 font-mono">
-                    红 {redAlive} : {blackAlive} 黑
-                  </p>
-                  <button
-                    onClick={handleRestart}
-                    className="mt-2 px-8 py-2.5 bg-stone-800 text-white rounded-full hover:bg-stone-700 hover:scale-105 active:scale-95 transition-all shadow-lg"
-                  >
-                    再来一局
-                  </button>
+              <Board
+                gameState={gameState}
+                explosions={explosions}
+                shaking={shaking}
+                onPieceSelect={handlePieceSelect}
+                onMove={handleMove}
+                onInvalidClick={triggerShake}
+                isValidMove={isValidMove}
+              />
+
+              {/* Winner Overlay */}
+              {gameState.winner && (
+                <div className="absolute inset-0 bg-black/30 backdrop-blur-[3px] flex items-center justify-center rounded-lg z-50 overflow-hidden">
+                  {/* 彩带 */}
+                  {Array.from({ length: 28 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="confetti"
+                      style={{
+                        left: `${(i * 37) % 100}%`,
+                        background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+                        animationDuration: `${2.2 + (i % 5) * 0.45}s`,
+                        animationDelay: `${(i % 7) * 0.25}s`,
+                      }}
+                    />
+                  ))}
+                  <div className="bg-white/95 p-8 rounded-2xl shadow-2xl flex flex-col items-center animate-pop-in">
+                    <Trophy className={`w-14 h-14 mb-4 animate-trophy ${gameState.winner === 'red' ? 'text-red-500' : 'text-stone-800'}`} />
+                    <h2 className={`text-3xl font-serif font-bold mb-1 tracking-widest ${gameState.winner === 'red' ? 'text-red-600' : 'text-stone-900'}`}>
+                      {gameState.winner === 'red' ? '红方' : '黑方'} 胜利!
+                    </h2>
+                    <p className="text-sm text-stone-400 mb-4 font-mono">
+                      红 {redAlive} : {blackAlive} 黑
+                    </p>
+                    <button
+                      onClick={handleRestart}
+                      className="mt-2 px-8 py-2.5 bg-stone-800 text-white rounded-full hover:bg-stone-700 hover:scale-105 active:scale-95 transition-all shadow-lg"
+                    >
+                      再来一局
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
         {/* Sidebar Controls */}
-        <div className="flex flex-col gap-5 bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl border border-stone-200 w-full lg:w-[320px]">
+        <div className="flex flex-col gap-5 bg-white/90 backdrop-blur p-6 rounded-2xl shadow-xl border border-stone-200 w-full lg:w-[320px] lg:mt-[52px]">
 
           <div className="space-y-1">
             <h1 className="text-3xl font-serif font-bold text-stone-800">坦克大战</h1>

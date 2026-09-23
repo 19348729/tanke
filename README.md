@@ -76,7 +76,7 @@ npm run preview   # 本地预览生产构建
 
 - **React 19** + **TypeScript** — 组件化界面与类型安全
 - **Vite 6** — 开发服务器与构建工具
-- **Tailwind CSS**（CDN）— 样式
+- **Tailwind CSS 3**（本地 PostCSS 构建，无外网依赖）— 样式
 - **lucide-react** — 图标
 - **Web Audio API** — 运行时合成音效
 - **SVG** — 棋盘、棋子与特效绘制
@@ -87,9 +87,9 @@ npm run preview   # 本地预览生产构建
 
 ```
 tank/
-├── index.html          # 入口 HTML（引入 Tailwind CDN、字体、index.css）
+├── index.html          # 入口 HTML
 ├── index.tsx           # React 挂载入口
-├── index.css           # 自定义动画与特效（爆炸、彩带、抖动、呼吸提示等）
+├── index.css           # Tailwind 指令 + 自定义动画与特效（爆炸、彩带、抖动、呼吸提示等）
 ├── App.tsx             # 主组件：游戏状态、走子/吃子逻辑、胜负判定、侧栏 UI
 ├── types.ts            # 类型定义（Player / Piece / Position / GameState）
 ├── components/
@@ -97,6 +97,8 @@ tank/
 │   └── Piece.tsx       # 单个坦克棋子的 SVG 绘制
 ├── utils/
 │   └── sounds.ts       # 基于 Web Audio 的音效合成
+├── tailwind.config.js  # Tailwind 配置（扫描路径、中文衬线字体）
+├── postcss.config.js   # PostCSS 配置
 └── vite.config.ts      # Vite 配置
 ```
 
