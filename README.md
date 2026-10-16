@@ -33,6 +33,16 @@
 
 ---
 
+## Godot 原生版
+
+`godot/` 目录是用 Godot 4.7 重写的版本，新增人机对战（三档 AI）、提示、无子可走判负等改进，详见 [godot/README.md](godot/README.md)。
+
+```bash
+godot --path godot
+```
+
+---
+
 ## 本地运行
 
 **前置要求**：Node.js（建议 18+）
