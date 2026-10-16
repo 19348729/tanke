@@ -35,7 +35,7 @@
 
 ## Godot 原生版
 
-`godot/` 目录是用 Godot 4.7 重写的版本，新增人机对战（三档 AI）、提示、无子可走判负等改进，详见 [godot/README.md](godot/README.md)。
+`godot/` 目录是用 Godot 4.7 重写的版本，新增人机对战（6 个难度与性格预设 + 自定义参数）、提示、无子可走判负等改进，详见 [godot/README.md](godot/README.md)。
 
 ```bash
 godot --path godot
